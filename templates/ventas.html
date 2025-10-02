@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Ventas - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title">
+            <i class="fas fa-shopping-cart"></i> Gestión de Ventas
+        </h2>
+        <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nueva Venta
+        </a>
+    </div>
+
+    {% if ventas %}
+        <div class="table-container">
+            <table class="table data-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-user"></i> Cliente</th>
+                        <th><i class="fas fa-box"></i> Producto</th>
+                        <th><i class="fas fa-sort-numeric-up"></i> Cantidad</th>
+                        <th><i class="fas fa-dollar-sign"></i> Precio Unit.</th>
+                        <th><i class="fas fa-calculator"></i> Total</th>
+                        <th><i class="fas fa-building"></i> Tienda</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Entrega</th>
+                        <th><i class="fas fa-calendar"></i> Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas %}
+                    <tr>
+                        <td>{{ venta.id_venta }}</td>
+                        <td>{{ venta.cliente_nombre }} {{ venta.cliente_apellido }}</td>
+                        <td>{{ venta.producto_nombre }}</td>
+                        <td>{{ venta.cantidad }}</td>
+                        <td>${{ "%.2f"|format(venta.precio_unitario) }}</td>
+                        <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                        <td>{{ venta.nombre_tienda }}</td>
+                        <td>{{ venta.nombre_lugar }}</td>
+                        <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') if venta.fecha else 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center" style="padding: 3rem;">
+            <i class="fas fa-shopping-cart" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+            <h3>No hay ventas registradas</h3>
+            <p>Comienza registrando tu primera venta</p>
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Registrar Venta
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

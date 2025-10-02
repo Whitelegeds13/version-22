@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Lugares de Entrega - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title">
+            <i class="fas fa-map-marker-alt"></i> Lugares de Entrega
+        </h2>
+        <a href="{{ url_for('nuevo_lugar_entrega') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Lugar
+        </a>
+    </div>
+
+    {% if lugares %}
+        <div class="table-container">
+            <table class="table data-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Nombre</th>
+                        <th><i class="fas fa-address-card"></i> Dirección</th>
+                        <th><i class="fas fa-calendar"></i> Fecha Creación</th>
+                        <th><i class="fas fa-cogs"></i> Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lugar in lugares %}
+                    <tr>
+                        <td>{{ lugar.id_lugar }}</td>
+                        <td>{{ lugar.nombre_lugar }}</td>
+                        <td>{{ lugar.direccion }}</td>
+                        <td>{{ lugar.fecha_creacion.strftime('%d/%m/%Y') if lugar.fecha_creacion else 'N/A' }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('editar_lugar_entrega', id=lugar.id_lugar) }}" 
+                                   class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center" style="padding: 3rem;">
+            <i class="fas fa-map-marker-alt" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+            <h3>No hay lugares de entrega registrados</h3>
+            <p>Comienza agregando tu primer lugar de entrega</p>
+            <a href="{{ url_for('nuevo_lugar_entrega') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Lugar
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

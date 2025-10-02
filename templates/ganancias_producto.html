@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Ganancias por Producto - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title">
+            <i class="fas fa-box-open"></i> Ganancias por Producto
+        </h2>
+        <a href="{{ url_for('ganancias') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Reportes
+        </a>
+    </div>
+
+    {% if ganancias_producto %}
+        <div class="table-container">
+            <table class="table data-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-box"></i> Producto</th>
+                        <th><i class="fas fa-dollar-sign"></i> Precio Actual</th>
+                        <th><i class="fas fa-sort-numeric-up"></i> Total Vendido</th>
+                        <th><i class="fas fa-chart-line"></i> Precio Promedio</th>
+                        <th><i class="fas fa-calculator"></i> Ingresos Totales</th>
+                        <th><i class="fas fa-percentage"></i> Participación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total_ingresos = ganancias_producto|sum(attribute='ingresos_totales') %}
+                    {% for producto in ganancias_producto %}
+                    <tr>
+                        <td><strong>{{ producto.nombre }}</strong></td>
+                        <td>${{ "%.2f"|format(producto.precio) }}</td>
+                        <td>
+                            <span class="badge badge-primary">{{ producto.total_vendido }}</span>
+                        </td>
+                        <td>${{ "%.2f"|format(producto.precio_promedio) }}</td>
+                        <td><strong>${{ "%.2f"|format(producto.ingresos_totales) }}</strong></td>
+                        <td>
+                            {% set porcentaje = (producto.ingresos_totales / total_ingresos * 100) if total_ingresos > 0 else 0 %}
+                            <span class="badge {{ 'badge-success' if porcentaje > 20 else 'badge-warning' if porcentaje > 10 else 'badge-secondary' }}">
+                                {{ "%.1f"|format(porcentaje) }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr style="background: #f8f9fa; font-weight: bold;">
+                        <td>TOTAL</td>
+                        <td>-</td>
+                        <td>
+                            <span class="badge badge-success">
+                                {{ ganancias_producto|sum(attribute='total_vendido') }}
+                            </span>
+                        </td>
+                        <td>-</td>
+                        <td><strong>${{ "%.2f"|format(total_ingresos) }}</strong></td>
+                        <td>100%</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Estadísticas adicionales -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+            <div class="card">
+                <div class="text-center" style="padding: 1rem;">
+                    <h4>Producto Top</h4>
+                    <p><strong>{{ ganancias_producto[0].nombre if ganancias_producto else 'N/A' }}</strong></p>
+                    <small>${{ "%.2f"|format(ganancias_producto[0].ingresos_totales) if ganancias_producto else '0.00' }}</small>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="text-center" style="padding: 1rem;">
+                    <h4>Productos Activos</h4>
+                    <p><strong>{{ ganancias_producto|length }}</strong></p>
+                    <small>Con ventas registradas</small>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="text-center" style="padding: 1rem;">
+                    <h4>Ingreso Promedio</h4>
+                    <p><strong>${{ "%.2f"|format(total_ingresos / ganancias_producto|length) if ganancias_producto else '0.00' }}</strong></p>
+                    <small>Por producto</small>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="text-center" style="padding: 3rem;">
+            <i class="fas fa-chart-line" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+            <h3>No hay datos de ganancias por producto</h3>
+            <p>Registra algunas ventas para ver los reportes</p>
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Registrar Venta
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

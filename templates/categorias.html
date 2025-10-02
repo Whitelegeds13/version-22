@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Categorías - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="card fade-in">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title">
+            <i class="fas fa-tags"></i> Gestión de Categorías
+        </h2>
+        <a href="{{ url_for('nueva_categoria') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nueva Categoría
+        </a>
+    </div>
+
+    {% if categorias %}
+        <div class="table-container">
+            <table class="table data-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-tag"></i> Nombre de Categoría</th>
+                        <th><i class="fas fa-cogs"></i> Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for categoria in categorias %}
+                    <tr>
+                        <td>{{ categoria.id_categoria }}</td>
+                        <td>{{ categoria.nombre_categoria }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('editar_categoria', id=categoria.id_categoria) }}" 
+                                   class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ url_for('eliminar_categoria', id=categoria.id_categoria) }}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center" style="padding: 3rem;">
+            <i class="fas fa-tags" style="font-size: 4rem; color: #ccc; margin-bottom: 1rem;"></i>
+            <h3>No hay categorías registradas</h3>
+            <p>Comienza agregando tu primera categoría</p>
+            <a href="{{ url_for('nueva_categoria') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Categoría
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

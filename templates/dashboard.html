@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Ventas{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="card-header">
+        <h1 class="card-title">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </h1>
+        <p>Bienvenido al sistema de gestión de ventas</p>
+    </div>
+
+    <!-- Estadísticas principales -->
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.total_productos }}</div>
+            <div class="stat-label">
+                <i class="fas fa-box"></i> Productos
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.total_clientes }}</div>
+            <div class="stat-label">
+                <i class="fas fa-users"></i> Clientes
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">{{ stats.total_ventas }}</div>
+            <div class="stat-label">
+                <i class="fas fa-shopping-cart"></i> Ventas
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-number">${{ "%.2f"|format(stats.ingresos_totales) }}</div>
+            <div class="stat-label">
+                <i class="fas fa-dollar-sign"></i> Ingresos
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Productos con stock bajo -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Productos con Stock Bajo
+                </h3>
+            </div>
+            
+            {% if productos_stock_bajo %}
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in productos_stock_bajo %}
+                            <tr class="{{ 'stock-critico' if producto.stock < 5 else 'stock-bajo' }}">
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.stock }}</td>
+                                <td>
+                                    <span class="badge {{ 'badge-danger' if producto.stock < 5 else 'badge-warning' }}">
+                                        {{ 'Crítico' if producto.stock < 5 else 'Bajo' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center">
+                    <i class="fas fa-check-circle text-success"></i>
+                    Todos los productos tienen stock suficiente
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Ventas recientes -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-clock"></i>
+                    Ventas Recientes
+                </h3>
+            </div>
+            
+            {% if ventas_recientes %}
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in ventas_recientes %}
+                            <tr>
+                                <td>{{ venta.cliente_nombre }} {{ venta.cliente_apellido }}</td>
+                                <td>{{ venta.producto_nombre }}</td>
+                                <td>${{ "%.2f"|format(venta.total) }}</td>
+                                <td>{{ venta.fecha.strftime('%d/%m/%Y %H:%M') if venta.fecha else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center">
+                    <i class="fas fa-info-circle"></i>
+                    No hay ventas registradas aún
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-bolt"></i>
+                Acciones Rápidas
+            </h3>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="{{ url_for('nueva_venta') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Nueva Venta
+            </a>
+            
+            <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Nuevo Cliente
+            </a>
+            
+            <a href="{{ url_for('nuevo_producto') }}" class="btn btn-warning">
+                <i class="fas fa-box"></i> Nuevo Producto
+            </a>
+            
+            <a href="{{ url_for('ganancias') }}" class="btn btn-secondary">
+                <i class="fas fa-chart-line"></i> Ver Reportes
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
